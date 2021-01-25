@@ -4,6 +4,7 @@ import com.woltappsummer.BackendTest.Model.Restaurant;
 import com.woltappsummer.BackendTest.Service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -16,8 +17,13 @@ public class RestaurantsController {
     RestaurantService service;
 
     @GetMapping("/discovery")
-    public List<Restaurant> getRestaurants() throws IOException {
-        List<Restaurant> db = service.getResponse();
-        return db;
+    public RestaurantService.ResponseObject getRestaurants(
+            @RequestParam(required = true) float lat,
+            @RequestParam(required = true) float lon
+    ) throws IOException {
+
+        RestaurantService.ResponseObject response = service.getResponse(lat, lon);
+        return response;
     };
+
 }

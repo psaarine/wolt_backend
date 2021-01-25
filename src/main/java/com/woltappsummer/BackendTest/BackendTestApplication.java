@@ -1,13 +1,17 @@
 package com.woltappsummer.BackendTest;
 
 import com.woltappsummer.BackendTest.DummyData.DummyDataGenerator;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 
 
 import java.io.File;
 
 @SpringBootApplication
+@EnableConfigurationProperties(ApplicationProperties.class)
 public class BackendTestApplication {
 
 	static private String filename = "restaurants.json";
@@ -30,6 +34,7 @@ public class BackendTestApplication {
 			e.printStackTrace();
 		}
 		SpringApplication.run(BackendTestApplication.class, args);
+
 
 
 	}

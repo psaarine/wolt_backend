@@ -3,6 +3,7 @@ package com.woltappsummer.BackendTest.DummyData;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import com.google.gson.Gson;
@@ -35,11 +36,11 @@ public class DummyDataGenerator {
             for(i = 0; i < 100; i++){
                 restaurant = new Restaurant(
                         "hash-" + i,
-                        this.generateDummyLocation(),
+                        this.generateDummyLocation(i),
                         "restaurant-" + i,
-                        generateDummyDate(),
-                        this.random.nextBoolean(),
-                        this.random.nextFloat()
+                        generateDummyDate(i),
+                        returnBoolean(i),
+                        returnPopularity(i)
                 );
                 list.add(restaurant);
             }
@@ -52,21 +53,36 @@ public class DummyDataGenerator {
         System.out.println("Dummy Generated");
     }
 
-    private Location generateDummyLocation(){
+    private Location generateDummyLocation(int i){
         /*
 
-        Generates dummy distance from the center of Helsinki
+        Generates dummy distance the point 0.0.
+        Designed so that it will cut off some of the "restaurants" in the middle of the sea.
 
          */
-
-        double latitude = 60.166641;
-        double longitude = 24.943537;
-        return new Location(this.random.nextFloat(), this.random.nextFloat());
+        DecimalFormat formatter = new DecimalFormat("0.00000");
+        double latitude = 0.0;
+        double longitude = Math.round(0.0002 * i * 10000.0 ) / 10000.0;
+        return new Location(latitude, longitude);
     }
 
-    private Date generateDummyDate(){
+    private Date generateDummyDate(int i){
         Calendar c = new GregorianCalendar();
-        c.set(2010, 11, 30);
+        int days = (int) Math.round(2.4 * i);
+        c.add(Calendar.DAY_OF_MONTH, days);
         return c.getTime();
+    }
+
+    private boolean returnBoolean(int i){
+        int jaannos = i % 2;
+        if (jaannos == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private float returnPopularity(int i){
+        return (float) ((float) i * 0.01);
     }
 }
