@@ -93,7 +93,7 @@ public class TestEnviroments {
         for(i = 0; i < 80; i++){
             restaurant = new Restaurant(
                     "testhash",
-                    new Location(0.01, 0.01),
+                    new Location(0.001, 0.001),
                     "TestRestaurant-mismatch-" + i,
                     this.returnDate(300), // These dates will be cut off by function
                     true,
@@ -106,7 +106,7 @@ public class TestEnviroments {
 
             restaurant = new Restaurant(
                     "testhash",
-                    new Location(0.01, 0.01),
+                    new Location(0.001, 0.001),
                     "TestRestaurant-match-" + i,
                    returnDate(i),
                     true,

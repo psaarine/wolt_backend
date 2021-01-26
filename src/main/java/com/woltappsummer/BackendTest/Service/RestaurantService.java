@@ -50,12 +50,15 @@ public class RestaurantService {
                 );
         nearbyRestaurants = new ArrayList<Restaurant>(nearbyRestaurants);
 
+        List<Restaurant> newRestaurants = this.getNewest(splitLists.onlineList, splitLists.offlineList);
+        newRestaurants = new ArrayList<Restaurant>(newRestaurants);
+
         Section popular = new Section("Popular Restaurants", this.getPopular(splitLists.onlineList, splitLists.offlineList));
-        Section newRestaurants = new Section("New Restaurants", testRestaurants);
+        Section newRestaurantsSection = new Section("New Restaurants", newRestaurants);
         Section nearby = new Section("Nearby Restaurants", nearbyRestaurants);
 
         resp.addSection(popular);
-        resp.addSection(newRestaurants);
+        resp.addSection(newRestaurantsSection);
         resp.addSection(nearby);
 
         return resp;
@@ -81,6 +84,7 @@ public class RestaurantService {
         for(Restaurant r: asList){
             if(this.validateDistance(r.getLocation(), lat, lon)){
                 response.add(r);
+
             }
         }
         return response;
@@ -145,6 +149,23 @@ public class RestaurantService {
                 return restaurant.getLaunch_date().compareTo(t1.getLaunch_date());
             }
         });
+
+        Collections.reverse(unsortedList);
+        if (unsortedList.size() > 10) {
+            unsortedList = unsortedList.subList(0, 10);
+        } else {
+            Collections.sort(unsortedOfflineList, new Comparator<Restaurant>() {
+                @Override
+                public int compare(Restaurant restaurant, Restaurant t1) {
+                    return restaurant.getLaunch_date().compareTo(t1.getLaunch_date());
+                }
+            });
+
+            unsortedList.addAll(unsortedOfflineList);
+            if ( unsortedList.size() > 10 ) {
+                unsortedList = unsortedList.subList(0, 10);
+            }
+        }
 
         return unsortedList;
     }

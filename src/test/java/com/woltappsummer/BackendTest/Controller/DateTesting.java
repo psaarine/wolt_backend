@@ -19,9 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,17 +70,38 @@ public class DateTesting {
         List<RestaurantService.Section> sections = restaurants.getSections();
 
         assertEquals(3, sections.size());
+    }
 
+    @Test
+    public void testEndpoint() throws Exception{
 
-        /*
-        List<Restaurant> restaurants = service.getRestaurants(00.000f, 00.000f);
+        MvcResult result = this.mvc.perform(get(this.url)).andReturn();
+        String resultString = result.getResponse().getContentAsString();
 
-        for (Restaurant r: restaurants){
-            System.out.println(r.getLaunch_date().toString());
+        RestaurantService.ResponseObject object = gson.fromJson(resultString, RestaurantService.ResponseObject.class);
 
+        List<RestaurantService.Section> sections = object.getSections();
+
+        assertEquals(3, sections.size());
+
+        RestaurantService.Section section = sections.get(1);
+        assertEquals("New Restaurants", section.getTitle());
+        List<Restaurant> restaurants = section.getRestaurants();
+
+        int change = 0;
+        Date date = restaurants.get(0).getLaunch_date();
+
+        Iterator<Restaurant> iterator = restaurants.listIterator();
+
+        while(iterator.hasNext()){
+            Restaurant r = iterator.next();
+            change = date.compareTo(r.getLaunch_date());
+
+            assert(change >= 0); // Asserts that date is always higher.
+            date = r.getLaunch_date();
 
         }
 
-         */
+
     }
 }
