@@ -41,14 +41,16 @@ public class RestaurantService {
         ResponseObject resp = new ResponseObject();
         ListContainer splitLists = this.splitList(list);
 
-        List<Restaurant> testRestaurants = new ArrayList<Restaurant>();
+        System.out.println("Lista on ennen " + splitLists.getOnlineList().size());
         List<Restaurant> nearbyRestaurants = this.getNearby(
-                splitLists.onlineList,
-                splitLists.offlineList,
+                splitLists.getOnlineList(),
+                splitLists.getOfflineList(),
                 lat,
                 lon
                 );
         nearbyRestaurants = new ArrayList<Restaurant>(nearbyRestaurants);
+        System.out.println("Lista on jälkeen " + splitLists.getOnlineList().size());
+
 
         List<Restaurant> newRestaurants = this.getNewest(splitLists.onlineList, splitLists.offlineList);
         newRestaurants = new ArrayList<Restaurant>(newRestaurants);
@@ -91,6 +93,8 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getPopular(List<Restaurant> unsortedList, List<Restaurant> unsortedOfflineList){
+
+
         List<Restaurant> respList = new ArrayList<Restaurant>();
         Collections.sort(unsortedList, new Comparator<Restaurant>() {
             @Override
@@ -124,14 +128,20 @@ public class RestaurantService {
     public List<Restaurant> getNearby(List<Restaurant> unsortedList, List<Restaurant> unsortedOfflineList, float lat, float lon){
 
 
+
         List<Restaurant> arranged = arrangeClosest(unsortedList, lat, lon);
+
 
         if (arranged.size() > 10){
             arranged = arranged.subList(0, 10);
         } else {
             arranged = arranged.subList(0, arranged.size());
+
             List<Restaurant> arrangedOfflineList = arrangeClosest(unsortedOfflineList, lat, lon);
+
             arranged.addAll(arrangedOfflineList);
+
+            System.out.println("get nearby function sisässä pituus on " + unsortedList.size());
             if (arranged.size() > 10) {
                 arranged = arranged.subList(0, 10);
             }
@@ -164,6 +174,19 @@ public class RestaurantService {
             unsortedList.addAll(unsortedOfflineList);
             if ( unsortedList.size() > 10 ) {
                 unsortedList = unsortedList.subList(0, 10);
+
+            } else {
+                Collections.sort(unsortedOfflineList, new Comparator<Restaurant>() {
+                    @Override
+                    public int compare(Restaurant restaurant, Restaurant t1) {
+                        return restaurant.getLaunch_date().compareTo(t1.getLaunch_date());
+                    }
+                });
+                Collections.reverse(unsortedOfflineList);
+                unsortedList.addAll(unsortedOfflineList);
+                if (unsortedList.size() > 10) {
+                    unsortedList = unsortedList.subList(0, 10);
+                }
             }
         }
 
@@ -171,7 +194,7 @@ public class RestaurantService {
     }
 
 
-    private ListContainer splitList(List<Restaurant> rawList){
+    public ListContainer splitList(List<Restaurant> rawList){
         ArrayList<Restaurant> onlineList = new ArrayList<Restaurant>();
         ArrayList<Restaurant> offlineList = new ArrayList<Restaurant>();
 

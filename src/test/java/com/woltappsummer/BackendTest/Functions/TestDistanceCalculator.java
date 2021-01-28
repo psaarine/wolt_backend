@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class TestDistanceCalculator {
@@ -185,13 +186,51 @@ public class TestDistanceCalculator {
     }
 
     @Test
-    public void testGetPopular(){
+    public void testSplitLists(){
+
         /*
 
-        Tests that getPopular works as expected
+        Tests that Restaurant service split list method works as expected
 
          */
 
+        List<Restaurant> rawList = new ArrayList<Restaurant>();
+        int i;
+        Restaurant r;
+        for (i = 0; i < 20; i++){
+            r = new Restaurant(
+                    "testhash",
+                    new Location(0.0, 0.0),
+                    "test-restaurant",
+                    new Date(System.currentTimeMillis()),
+                    this.returnBoolean(i),
+                    0.1f
+            );
+            rawList.add(r);
+        }
 
+        RestaurantService.ListContainer cont = service.splitList(rawList);
+
+        List<Restaurant> onlineList = cont.getOnlineList();
+        List<Restaurant> offlineList = cont.getOfflineList();
+
+        for (Restaurant onlineR: onlineList) {
+            assertTrue(onlineR.getOnline());
+        }
+
+        for (Restaurant offlineR: offlineList) {
+            assertFalse(offlineR.getOnline());
+        }
+
+
+
+    }
+
+    private boolean returnBoolean(int i){
+        if (i % 2 == 0){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
