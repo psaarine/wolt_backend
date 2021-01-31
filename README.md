@@ -44,3 +44,13 @@ said that "easy testing will make you happy". So I took a liberty
 of delivering it as a github-repo instead. This way I could prove
 not only my ability to produce code but also demonstrate my ability
  with popular devOps tools such as Git and Docker.
+
+On my computer I get it to run on port 8080 like this:
+
+     sudo docker run -p 8080:8080 <built-image-name>
+
+It will generate a restaurants.json file in the directory of the
+jar file. It is built so that all of the restaurants are around point 
+00.000 and 00.000. In order to watch the response, I use url of
+
+    http://localhost:8080/discovery?lat=00.000&lon=00.000
