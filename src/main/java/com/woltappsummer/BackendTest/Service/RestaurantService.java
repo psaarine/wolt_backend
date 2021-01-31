@@ -11,6 +11,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.*;
 
 import com.google.gson.JsonParser;
@@ -18,6 +21,8 @@ import com.google.gson.JsonObject;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 @Getter
@@ -41,7 +46,7 @@ public class RestaurantService {
         ResponseObject resp = new ResponseObject();
         ListContainer splitLists = this.splitList(list);
 
-        System.out.println("Lista on ennen " + splitLists.getOnlineList().size());
+
         List<Restaurant> nearbyRestaurants = this.getNearby(
                 splitLists.getOnlineList(),
                 splitLists.getOfflineList(),
@@ -49,11 +54,12 @@ public class RestaurantService {
                 lon
                 );
         nearbyRestaurants = new ArrayList<Restaurant>(nearbyRestaurants);
-        System.out.println("Lista on jälkeen " + splitLists.getOnlineList().size());
 
 
-        List<Restaurant> newRestaurants = this.getNewest(splitLists.onlineList, splitLists.offlineList);
+
+        List<Restaurant> newRestaurants = this.getNewest(splitLists.getOnlineList(), splitLists.getOfflineList());
         newRestaurants = new ArrayList<Restaurant>(newRestaurants);
+
 
         Section popular = new Section("Popular Restaurants", this.getPopular(splitLists.onlineList, splitLists.offlineList));
         Section newRestaurantsSection = new Section("New Restaurants", newRestaurants);
@@ -141,7 +147,7 @@ public class RestaurantService {
 
             arranged.addAll(arrangedOfflineList);
 
-            System.out.println("get nearby function sisässä pituus on " + unsortedList.size());
+
             if (arranged.size() > 10) {
                 arranged = arranged.subList(0, 10);
             }
@@ -150,8 +156,13 @@ public class RestaurantService {
         return arranged;
     }
 
-    public List<Restaurant> getNewest(List<Restaurant> unsortedList, List<Restaurant> unsortedOfflineList) {
-        List<Restaurant> arranged = new ArrayList<Restaurant>();
+    public List<Restaurant> getNewest(List<Restaurant> unsorted, List<Restaurant> unsortedOffline) {
+        List<Restaurant> unsortedList = new ArrayList<Restaurant>(unsorted);
+        List<Restaurant> unsortedOfflineList = new ArrayList<>(unsortedOffline);
+
+
+        unsortedList = removeOld(unsortedList);
+
 
         Collections.sort(unsortedList, new Comparator<Restaurant>() {
             @Override
@@ -159,6 +170,8 @@ public class RestaurantService {
                 return restaurant.getLaunch_date().compareTo(t1.getLaunch_date());
             }
         });
+
+
 
         Collections.reverse(unsortedList);
         if (unsortedList.size() > 10) {
@@ -193,6 +206,21 @@ public class RestaurantService {
         return unsortedList;
     }
 
+    public List<Restaurant> removeOld(List<Restaurant> restaurants){
+        List<Restaurant> editedList = new ArrayList<Restaurant>();
+        long change;
+
+        for (Restaurant r: restaurants) {
+            change = returnAsDays(r.getLaunch_date());
+            if (change > -122){
+                editedList.add(r);
+            } else {
+            }
+        }
+
+
+        return  editedList;
+    }
 
     public ListContainer splitList(List<Restaurant> rawList){
         ArrayList<Restaurant> onlineList = new ArrayList<Restaurant>();
@@ -246,8 +274,8 @@ public class RestaurantService {
             }
         });
         Collections.reverse(list);
-
-        return list;
+        List<Restaurant> respList = new ArrayList<Restaurant>(list);
+        return respList;
     }
 
     public double calculateDistance(double leveys1, double pituus1, double leveys2, double pituus2){
@@ -270,6 +298,21 @@ public class RestaurantService {
         Double distance = R * c;
 
         return distance;
+    }
+
+    public long returnAsDays(Date date){
+         /*
+
+         Takes a date and returns time in between now and that date in days.
+
+          */
+
+        LocalDate now = new Date(System.currentTimeMillis()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateToLocal = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        long daysBetween = DAYS.between(now, dateToLocal);
+
+
+        return daysBetween;
     }
 
     private static Double toRad(Double value) {

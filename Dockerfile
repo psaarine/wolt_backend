@@ -10,4 +10,15 @@ RUN apt-get install maven -y
 
 COPY . .
 
+EXPOSE 8080
+
 RUN mvn test
+
+RUN mvn clean install
+
+ENTRYPOINT ["java", "-jar", "/app/target/wolt-backend-task.jar"]
+
+
+
+
+

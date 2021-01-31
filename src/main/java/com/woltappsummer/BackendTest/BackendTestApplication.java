@@ -26,7 +26,7 @@ public class BackendTestApplication {
 				System.out.println("Didn't find restaurant json file.");
 				System.out.println("Generating dummy file");
 				DummyDataGenerator generator = new DummyDataGenerator(filePath);
-				generator.generateDummyJson();
+				generator.generateAdvancedDummy();
 			} else {
 				System.out.println(" File exists.");
 			}

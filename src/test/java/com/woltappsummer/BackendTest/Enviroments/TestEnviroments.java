@@ -89,10 +89,10 @@ public class TestEnviroments {
             restaurant = new Restaurant(
                     "testhash",
                     new Location(0.001 + distance, 0.001 + distance),
-                    "TestRestaurant-match-popular" + i,
-                    returnDate(20),
+                    "TestRestaurant-match-popular-" + i,
+                    returnDate(120),
                     true,
-                    0.9f
+                    0.9f + (float) distance
             );
             restaurants.add(20 + i * 3, restaurant);
 
@@ -113,7 +113,7 @@ public class TestEnviroments {
             restaurant = new Restaurant(
                     "testhash",
                     new Location(0.002 + distance, 0.002 + distance),
-                    "TestRestaurant-match-new" + i,
+                    "TestRestaurant-match-new-" + i,
                     returnDate(i),
                     true,
                     0.3f
@@ -124,13 +124,20 @@ public class TestEnviroments {
         }
 
         for (i = 0; i < 3; i++){
+
+            /*
+
+            These tree are there to be in the beginning of the
+            nearest restaurants -list
+
+             */
             double distance = (double) i / 10000;
 
             restaurant = new Restaurant(
                     "testhash",
-                    new Location(0.001 + distance, 0.001 + distance),
+                    new Location(0.0001 + distance, 0.0001 + distance),
                     "TestRestaurant-match-near" + i,
-                    returnDate(i),
+                    returnDate(300),
                     true,
                     0.3f
             );
@@ -247,9 +254,9 @@ public class TestEnviroments {
         return gson.toJson(restaurants);
     }
 
-    private Date returnDate(int i) {
+    public Date returnDate(int i) {
         Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.HOUR, i * (-24));
+        calendar.set(Calendar.DAY_OF_MONTH, i * -10);
         return calendar.getTime();
     }
 

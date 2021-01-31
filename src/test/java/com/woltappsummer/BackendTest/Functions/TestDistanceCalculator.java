@@ -226,6 +226,44 @@ public class TestDistanceCalculator {
 
     }
 
+    @Test
+    public void testRemoveDistant(){
+
+        /*
+
+         Tests removeDistant method of restaurant service. Also test generate date method.
+
+         */
+
+        List<Restaurant> restaurants = new ArrayList<Restaurant>();
+        List<Date> dates = new ArrayList<Date>();
+        Restaurant r;
+        int i;
+        Date date;
+
+        for (i = 0; i < 30; i++){
+            date = enviroments.returnDate(i);
+            dates.add(date);
+
+            r = new Restaurant(
+                    "hash",
+                    new Location(0.0, 0.0),
+                    "test",
+                    date,
+                    true,
+                    0.3f
+            );
+            restaurants.add(r);
+        }
+
+
+        restaurants = service.removeOld(restaurants);
+        for (Restaurant rest: restaurants) {
+            assert (service.returnAsDays(rest.getLaunch_date()) > -122);
+        }
+    }
+
+
     private boolean returnBoolean(int i){
         if (i % 2 == 0){
             return true;
